@@ -1,0 +1,24 @@
+{
+    "projectId": "64ea7ca35cedfe27f9c5",
+    "projectName": "harsh",
+    "functions": [
+        {
+            "$id": "64eba41f29159943bc14",
+            "name": "device-crud",
+            "runtime": "node-18.0",
+            "path": "functions/device-crud",
+            "entrypoint": "src/index.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [],
+            "events": [
+                "databases.64eb86e3be39b1fca82c.collections.64eb87b42cf58f11232c.documents.*.create",
+                "databases.64eb86e3be39b1fca82c.collections.64eb87b42cf58f11232c.documents.*.delete"
+            ],
+            "schedule": "",
+            "timeout": 15
+        }
+    ]
+}
