@@ -17,6 +17,7 @@ TODOs
 - vercel deployment
 - remove material kit branding
 - logo
+- dashboard stats
 
 ## ENV Vars
 
@@ -24,6 +25,17 @@ TODOs
 REACT_APP_APPWRITE_URL=
 REACT_APP_APPWRITE_PROJECT_ID=
 ```
+
+## Future Features
+
+- Load balancing, 
+- device group/pool and sharing,
+- access sharing,
+- per device limits
+- remote MDM for android, (for management of devices)
+- multi sim support
+- **+ collection**`dashboard-stats` cache for dashboard stats
+- **+ function** `get-dashboard-stats` for calculating dashboard stats
 
 ## Credits
 
