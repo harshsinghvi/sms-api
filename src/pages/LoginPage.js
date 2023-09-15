@@ -9,6 +9,8 @@ import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
+import { account } from '../utils/appwrite';
+import { URL } from '../utils/constants';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +45,13 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
 
+  const handleManualSignIn = (email, password) => {
+    account.createEmailSession(email, password);
+  };
+  const handleGoogleSignIn = () => {
+    account.createOAuth2Session('google', `${URL}/dashboard/app`, `${URL}/login?fail`);
+  };
+
   return (
     <>
       <Helmet>
@@ -70,7 +79,7 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to Minimal
+              Sign in to SMS API Dashboard
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
@@ -79,17 +88,17 @@ export default function LoginPage() {
             </Typography>
 
             <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
+              <Button fullWidth size="large" color="inherit" variant="outlined" onClick={handleGoogleSignIn}>
                 <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
               </Button>
 
-              <Button fullWidth size="large" color="inherit" variant="outlined">
+              {/* <Button fullWidth size="large" color="inherit" variant="outlined">
                 <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
               </Button>
 
               <Button fullWidth size="large" color="inherit" variant="outlined">
                 <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
-              </Button>
+              </Button> */}
             </Stack>
 
             <Divider sx={{ my: 3 }}>
@@ -98,7 +107,7 @@ export default function LoginPage() {
               </Typography>
             </Divider>
 
-            <LoginForm />
+            <LoginForm onClick={handleManualSignIn} />
           </StyledContent>
         </Container>
       </StyledRoot>

@@ -1,14 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Avatar,
+  // Avatar,
   Button,
   Popover,
   Checkbox,
@@ -21,7 +21,17 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  makeStyles,
 } from '@mui/material';
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -29,16 +39,23 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+// import USERLIST from '../_mock/user';
+import { addDevice, deleteDevice, getDevices } from '../utils/appwrite';
+import { API_URL, DEFAULT_UPDATE_INTERVAL } from '../utils/constants';
+import { AuthContext } from '../utils/auth';
+// import { formatDataTime } from '../utils/date';
+import { ClipboardCopy } from '../components/copy-to-clipboard/ClipboardCopy';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'model', label: 'Model', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
+  { id: 'battery', label: 'Battery', alignRight: false },
+  { id: 'carrierName', label: 'Carrier', alignRight: false },
+  { id: 'signal', label: 'Signal', alignRight: false },
+  // { id: 'createdAt', label: 'Created', alignRight: false },
   { id: '' },
 ];
 
@@ -74,7 +91,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
-  const [open, setOpen] = useState(null);
+  const [openPopover, setOpenPopover] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -86,14 +103,47 @@ export default function UserPage() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
+  const [devices, setDevices] = useState([]);
+
+  const { user } = useContext(AuthContext);
+
+  const [openDialogue, setOpenDialogue] = useState(false);
+  const [popoverElementId, setPopoverElementId] = useState('');
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const updateData = () => getDevices().then(setDevices);
+
+  useState(() => {
+    updateData();
+    const updateInterval = setInterval(updateData, DEFAULT_UPDATE_INTERVAL);
+    return () => clearInterval(updateInterval);
+  }, []);
+
+  const handleOpenDialogue = () => {
+    setOpenDialogue(true);
+  };
+
+  const handleDialogeClose = () => {
+    setOpenDialogue(false);
+    setPopoverElementId('');
+  };
+
+  const handleOpenMenu = (event, id) => {
+    setPopoverElementId(id);
+    setOpenPopover(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
-    setOpen(null);
+    setPopoverElementId('');
+    setOpenPopover(null);
+  };
+
+  const handleDeletePopover = async () => {
+    await deleteDevice(popoverElementId);
+    updateData();
   };
 
   const handleRequestSort = (event, property) => {
@@ -104,7 +154,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = devices.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -140,25 +190,30 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const handleAddDeviceButton = () => {
+    addDevice(user.$id);
+    updateData();
+  };
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - devices.length) : 0;
+
+  const filteredUsers = applySortFilter(devices, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Devices | SMS API </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Devices
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleAddDeviceButton}>
+            New Device
           </Button>
         </Stack>
 
@@ -172,14 +227,24 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={devices.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const {
+                      $id: id,
+                      name,
+                      status,
+                      $createdAt: createdAt,
+                      model,
+                      battery,
+                      carrierName,
+                      signalStrength,
+                    } = row;
+
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -190,25 +255,27 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
+                            {/* <Avatar alt={name} src={avatarUrl} /> */}
+                            <Iconify icon={'ant-design:android-filled'} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{role}</TableCell>
-
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{model}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Label color={(status === 'active' && 'success') || 'error'}>{sentenceCase(status)}</Label>
                         </TableCell>
 
+                        <TableCell align="left">{`${battery}%`}</TableCell>
+                        <TableCell align="left">{carrierName}</TableCell>
+                        <TableCell align="left">{signalStrength}</TableCell>
+                        {/* <TableCell align="left">{formatDataTime(createdAt)}</TableCell> */}
+
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, id)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -250,9 +317,9 @@ export default function UserPage() {
           </Scrollbar>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 25, 100]}
             component="div"
-            count={USERLIST.length}
+            count={devices.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -262,8 +329,8 @@ export default function UserPage() {
       </Container>
 
       <Popover
-        open={Boolean(open)}
-        anchorEl={open}
+        open={Boolean(openPopover)}
+        anchorEl={openPopover}
         onClose={handleCloseMenu}
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -279,16 +346,45 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleOpenDialogue}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          Copy Endpoint
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem sx={{ color: 'error.main' }} onClick={handleDeletePopover}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+
+      <Dialog
+        fullScreen={fullScreen}
+        open={openDialogue}
+        onClose={handleDialogeClose}
+        aria-labelledby="responsive-dialog-title"
+        PaperProps={{
+          sx: {
+            width: '100%',
+            maxWidth: '720px!important',
+          },
+        }}
+      >
+        <DialogTitle id="responsive-dialog-title">Device ID</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <ClipboardCopy heading={'Device ID'} copyText={`device_${popoverElementId}`} />
+            <ClipboardCopy heading={'Endpoint URL'} copyText={`${API_URL}/device/${popoverElementId}`} />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button autoFocus onClick={handleDialogeClose}>
+            Disagree
+          </Button> */}
+          <Button onClick={handleDialogeClose} autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

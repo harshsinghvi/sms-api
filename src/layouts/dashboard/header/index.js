@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -11,6 +12,7 @@ import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
+import { AuthContext } from '../../../utils/auth';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +45,7 @@ Header.propTypes = {
 };
 
 export default function Header({ onOpenNav }) {
+  const { user } = useContext(AuthContext);
   return (
     <StyledRoot>
       <StyledToolbar>
@@ -68,9 +71,9 @@ export default function Header({ onOpenNav }) {
             sm: 1,
           }}
         >
-          <LanguagePopover />
-          <NotificationsPopover />
-          <AccountPopover />
+          {/* <LanguagePopover /> */}
+          {/* <NotificationsPopover /> */}
+          <AccountPopover account={user} />
         </Stack>
       </StyledToolbar>
     </StyledRoot>

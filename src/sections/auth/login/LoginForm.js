@@ -8,13 +8,14 @@ import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
+export default function LoginForm({ onClick = null }) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClick = () => {
-    navigate('/dashboard', { replace: true });
+    if (onClick) return onClick();
+    return navigate('/dashboard', { replace: true });
   };
 
   return (
