@@ -22,6 +22,11 @@ TODOs
 ## ENV Vars
 
 ```.env
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Client
 REACT_APP_APPWRITE_URL=
 REACT_APP_APPWRITE_PROJECT_ID=
 ```
@@ -41,3 +46,5 @@ REACT_APP_APPWRITE_PROJECT_ID=
 
 - Dashboard Design [https://github.com/minimal-ui-kit/material-kit-react](https://github.com/minimal-ui-kit/material-kit-react)
 - AppWrite docs [https://appwrite.io/docs](https://appwrite.io/docs)
+- SVG [https://www.veryicon.com/icons/miscellaneous/generic-icon/ic_-document.html](https://www.veryicon.com/icons/miscellaneous/generic-icon/ic_-document.html)
+- dashboard templates [https://mui.com/store/collections/free-react-dashboard/](https://mui.com/store/collections/free-react-dashboard/)
