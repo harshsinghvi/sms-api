@@ -57,4 +57,4 @@ const res = {
   },
 };
 
-func(req, res).then();
+func({ req, res, log: console.log, error: console.error }).then();

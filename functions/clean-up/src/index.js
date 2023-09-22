@@ -1,4 +1,4 @@
-const sdk = require('node-appwrite');
+import { Client, Databases, Query } from 'node-appwrite';
 
 /*
   'req' variable has:
@@ -13,37 +13,31 @@ const sdk = require('node-appwrite');
   If an error is thrown, a response with code 500 will be returned.
 */
 
-module.exports = async function (req, res) {
-  if (
-    !req.variables['APPWRITE_FUNCTION_ENDPOINT'] ||
-    !req.variables['APPWRITE_FUNCTION_API_KEY'] ||
-    !req.variables['DEVICES_COLLECTION_ID'] ||
-    !req.variables['SMS_DATABSE_ID']
-  ) {
-    console.warn('Environment variables are not set. Function cannot use Appwrite SDK.');
+// INFO: Change ID
+const SMS_DATABSE_ID = 'sms-api';
+const DEVICES_COLLECTION_ID = 'devices';
+
+export default async ({ req, res, log, error }) => {
+  if (!req.variables['APPWRITE_FUNCTION_ENDPOINT'] || !req.variables['APPWRITE_FUNCTION_API_KEY']) {
+    error('Environment variables are not set. Function cannot use Appwrite SDK.');
     return res.send('Environment variables are not set. Function cannot use Appwrite SDK.');
   }
 
-  const { DEVICES_COLLECTION_ID, SMS_DATABSE_ID } = req.variables;
-
-  const client = new sdk.Client();
-  const database = new sdk.Databases(client);
+  const client = new Client();
+  const database = new Databases(client);
   client
     .setEndpoint(req.variables['APPWRITE_FUNCTION_ENDPOINT'])
     .setProject(req.variables['APPWRITE_FUNCTION_PROJECT_ID'])
     .setKey(req.variables['APPWRITE_FUNCTION_API_KEY'])
     .setSelfSigned(true);
 
-  const markDeletesDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [
-    sdk.Query.select(['$id']),
-    sdk.Query.equal('delete', true),
-  ]);
+  const markDeletesDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [Query.select(['$id']), Query.equal('delete', true)]);
 
-  const deleteNullDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [sdk.Query.select(['$id']), sdk.Query.isNull('delete')]);
+  const deleteNullDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [Query.select(['$id']), Query.isNull('delete')]);
 
   const deleteKeys = [];
 
-  console.log(
+  log(
     'delete key =>',
     markDeletesDocs.documents.map(({ $id }) => {
       deleteKeys.push($id);
@@ -51,7 +45,7 @@ module.exports = async function (req, res) {
     })
   );
 
-  console.log(
+  log(
     'null delete key =>',
     deleteNullDocs.documents.map(({ $id }) => {
       deleteKeys.push($id);
@@ -59,13 +53,11 @@ module.exports = async function (req, res) {
     })
   );
 
-  // console.log(deleteKeys);
-
   let promises = [];
 
   for (id of deleteKeys) {
-    promises.push(database.deleteCollection(SMS_DATABSE_ID, id).then(() => console.log(id, '=>', 'Collection deleted')));
-    promises.push(database.deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id).then(() => console.log(id, '=>', 'Document deleted')));
+    promises.push(database.deleteCollection(SMS_DATABSE_ID, id).then(() => log(id, '=>', 'Collection deleted')));
+    promises.push(database.deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id).then(() => log(id, '=>', 'Document deleted')));
   }
 
   await Promise.all(promises);
