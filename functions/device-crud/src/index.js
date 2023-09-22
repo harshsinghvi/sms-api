@@ -1,4 +1,4 @@
-const { Client, Databases, Permission, Role } = 'node-appwrite';
+import { Client, Databases, Permission, Role } from 'node-appwrite';
 
 /*
   'req' variable has:
