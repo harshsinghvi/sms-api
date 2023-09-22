@@ -39,10 +39,7 @@ module.exports = async function (req, res) {
     sdk.Query.equal('delete', true),
   ]);
 
-  const deleteNullDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [
-    sdk.Query.select(['$id']),
-    sdk.Query.isNull('delete'),
-  ]);
+  const deleteNullDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [sdk.Query.select(['$id']), sdk.Query.isNull('delete')]);
 
   const deleteKeys = [];
 
@@ -67,14 +64,8 @@ module.exports = async function (req, res) {
   let promises = [];
 
   for (id of deleteKeys) {
-    promises.push(
-      database.deleteCollection(SMS_DATABSE_ID, id).then(() => console.log(id, '=>', 'Collection deleted'))
-    );
-    promises.push(
-      database
-        .deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id)
-        .then(() => console.log(id, '=>', 'Document deleted'))
-    );
+    promises.push(database.deleteCollection(SMS_DATABSE_ID, id).then(() => console.log(id, '=>', 'Collection deleted')));
+    promises.push(database.deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id).then(() => console.log(id, '=>', 'Document deleted')));
   }
 
   await Promise.all(promises);

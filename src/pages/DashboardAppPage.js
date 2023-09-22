@@ -100,12 +100,7 @@ export default function DashboardAppPage() {
                 { label: 'Europe', value: 1443 },
                 { label: 'Africa', value: 4443 },
               ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
-              ]}
+              chartColors={[theme.palette.primary.main, theme.palette.info.main, theme.palette.warning.main, theme.palette.error.main]}
             />
           </Grid>
 

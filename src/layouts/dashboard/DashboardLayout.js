@@ -39,7 +39,7 @@ export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     (async () => {
       try {

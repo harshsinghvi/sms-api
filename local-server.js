@@ -1,5 +1,5 @@
 if (process.argv.length < 3) {
-  console.log('Invalid Usage')
+  console.log('Invalid Usage');
   process.exit();
 }
 
@@ -23,7 +23,7 @@ const req = {
   headers: {},
   payload: {},
   variables: {
-	...process.env, // add env vars
+    ...process.env, // add env vars
     // custom
     SMS_DATABSE_ID: 'asdasd',
     DEVICES_COLLECTION_ID: 'asd',

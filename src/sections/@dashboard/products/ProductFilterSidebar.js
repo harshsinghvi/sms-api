@@ -36,16 +36,7 @@ export const FILTER_PRICE_OPTIONS = [
   { value: 'between', label: 'Between $25 - $75' },
   { value: 'above', label: 'Above $75' },
 ];
-export const FILTER_COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
-  '#FF4842',
-  '#1890FF',
-  '#94D82D',
-  '#FFC107',
-];
+export const FILTER_COLOR_OPTIONS = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
 
 // ----------------------------------------------------------------------
 
@@ -163,14 +154,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
         </Scrollbar>
 
         <Box sx={{ p: 3 }}>
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="ic:round-clear-all" />}
-          >
+          <Button fullWidth size="large" type="submit" color="inherit" variant="outlined" startIcon={<Iconify icon="ic:round-clear-all" />}>
             Clear All
           </Button>
         </Box>

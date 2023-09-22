@@ -48,6 +48,10 @@ REACT_APP_APPWRITE_PROJECT_ID=
 - **+ collection**`dashboard-stats` cache for dashboard stats
 - **+ function** `get-dashboard-stats` for calculating dashboard stats
 
+## Prettfy all code
+
+- `prettier --write "./**/*.{js,jsx,json,css}"`
+
 ## Credits
 
 - Dashboard Design [https://github.com/minimal-ui-kit/material-kit-react](https://github.com/minimal-ui-kit/material-kit-react)

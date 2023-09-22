@@ -65,5 +65,7 @@ export const addDevice = async (userId) => {
 };
 
 export const deleteDevice = async (id) => {
-  await databases.updateDocument('64eb86e3be39b1fca82c', '64eb87b42cf58f11232c', id, { delete: true });
+  await databases.updateDocument('64eb86e3be39b1fca82c', '64eb87b42cf58f11232c', id, {
+    delete: true,
+  });
 };

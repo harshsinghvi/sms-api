@@ -72,9 +72,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+  return order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
 function applySortFilter(array, comparator, query) {
@@ -234,16 +232,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      $id: id,
-                      name,
-                      status,
-                      $createdAt: createdAt,
-                      model,
-                      battery,
-                      carrierName,
-                      signalStrength,
-                    } = row;
+                    const { $id: id, name, status, $createdAt: createdAt, model, battery, carrierName, signalStrength } = row;
 
                     const selectedUser = selected.indexOf(name) !== -1;
 
