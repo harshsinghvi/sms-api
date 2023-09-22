@@ -1,33 +1,60 @@
-import { Client } from 'node-appwrite';
+import { Client, Databases, Query } from 'node-appwrite';
 
-// This is your Appwrite function
-// It's executed each time we get a request
+const SMS_DATABSE_ID = 'sms-api';
+const DEVICES_COLLECTION_ID = 'devices';
+
 export default async ({ req, res, log, error }) => {
-  // Why not try the Appwrite SDK?
-  //
-  // const client = new Client()
-  //    .setEndpoint('https://cloud.appwrite.io/v1')
-  //    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-  //    .setKey(process.env.APPWRITE_API_KEY);
+  try {
+    if (!process.env.APPWRITE_FUNCTION_ENDPOINT || !process.env.APPWRITE_FUNCTION_API_KEY) {
+      error('Environment variables are not set. Function cannot use Appwrite SDK.');
+      return res.send('Environment variables are not set. Function cannot use Appwrite SDK.', 500);
+    }
 
-  // You can log messages to the console
-  log('Hello, Logs!');
+    const client = new Client()
+      .setEndpoint(process.env.APPWRITE_FUNCTION_ENDPOINT)
+      .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+      .setKey(process.env.APPWRITE_FUNCTION_API_KEY);
 
-  // If something goes wrong, log an error
-  error('Hello, Errors!');
+    const database = new Databases(client);
 
-  // The `req` object contains the request data
-  if (req.method === 'GET') {
-    // Send a response with the res object helpers
-    // `res.send()` dispatches a string back to the client
-    return res.send('Hello, World!');
+    const markDeletesDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [Query.select(['$id']), Query.equal('delete', true)]);
+
+    const deleteNullDocs = await database.listDocuments(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, [Query.select(['$id']), Query.isNull('delete')]);
+
+    const deleteKeys = [];
+
+    log(
+      'delete key =>',
+      markDeletesDocs.documents.map(({ $id }) => {
+        deleteKeys.push($id);
+        return $id;
+      })
+    );
+
+    log(
+      'null delete key =>',
+      deleteNullDocs.documents.map(({ $id }) => {
+        deleteKeys.push($id);
+        return $id;
+      })
+    );
+
+    let promises = [];
+
+    for (id of deleteKeys) {
+      promises.push(database.deleteCollection(SMS_DATABSE_ID, id).then(() => log(id, '=>', 'Collection deleted')));
+      promises.push(database.deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id).then(() => log(id, '=>', 'Document deleted')));
+    }
+
+    await Promise.all(promises);
+
+    res.json({
+      areDevelopersAwesome: true,
+      promises: promises.length,
+      deleteKeys,
+    });
+  } catch (err) {
+    error(err);
+    return res.json({ error: 'Something went Wrong !!' }, 500);
   }
-
-  // `res.json()` is a handy helper for sending JSON
-  return res.json({
-    motto: 'Build Fast. Scale Big. All in One Place.',
-    learn: 'https://appwrite.io/docs',
-    connect: 'https://appwrite.io/discord',
-    getInspired: 'https://builtwith.appwrite.io',
-  });
 };
