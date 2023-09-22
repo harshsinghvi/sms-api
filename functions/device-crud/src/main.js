@@ -26,24 +26,37 @@ export default async ({ req, res, log, error }) => {
   log(req.queryString); // Raw query params string. For example "limit=12&offset=50"
   log(JSON.stringify(req.query));
 
-  // You can log messages to the console
-  log('Hello, Logs!');
+  if (req.method !== 'POST') return res.json({ error: 'Something went Wrong !!' }, 500);
+  const event = req.headers['x-appwrite-event'].split('.').pop();
 
-  // If something goes wrong, log an error
-  error('Hello, Errors!');
+  const { $id: deviceId, owner } = req.body;
+  if (!deviceId || !owner) return res.json('no deviceId or userId', 400);
 
-  // The `req` object contains the request data
-  if (req.method === 'GET') {
-    // Send a response with the res object helpers
-    // `res.send()` dispatches a string back to the client
-    return res.send('Hello, World!');
+  switch (event) {
+    case 'create':
+      await databases.createCollection(BASE_DATABASE_ID, deviceId, `device_${deviceId}`, [Permission.read(Role.any())]);
+
+      // TODO: Check if needed
+      // const { enabled } = await databases.updateCollection(BASE_DATABASE_ID, deviceId, `device_${deviceId}`, [], false, true);
+
+      if (!enabled) res.send('Something went Wrong', 500);
+
+      await Promise.all([
+        databases.createStringAttribute(BASE_DATABASE_ID, deviceId, 'text', 160, true),
+        databases.createStringAttribute(BASE_DATABASE_ID, deviceId, 'to', 11, true),
+        databases.createEnumAttribute(BASE_DATABASE_ID, deviceId, 'status', ['pending', 'success', 'failed'], false, 'pending'),
+      ]);
+
+      return res.json({
+        areDevelopersAwesome: true,
+      });
+
+    // INFO: already deleted in manual clean up funciton saved for future reference
+    // case 'delete':
+    //   await databases.deleteCollection(BASE_DATABASE_ID, deviceId);
+    //   return res.json({
+    //     areDevelopersAwesome: true,
+    //   });
   }
-
-  // `res.json()` is a handy helper for sending JSON
-  return res.json({
-    motto: 'Build Fast. Scale Big. All in One Place.',
-    learn: 'https://appwrite.io/docs',
-    connect: 'https://appwrite.io/discord',
-    getInspired: 'https://builtwith.appwrite.io',
-  });
+  return res.json({ error: 'Something went Wrong !!' }, 500);
 };
