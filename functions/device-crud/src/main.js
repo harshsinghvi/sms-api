@@ -1,7 +1,8 @@
 import { Client, Databases, Permission, Role } from 'node-appwrite';
 
-// This is your Appwrite function
-// It's executed each time we get a request
+// INFO: Change ID
+const BASE_DATABASE_ID = 'sms-api';
+
 export default async ({ req, res, log, error }) => {
   try {
     if (!process.env.APPWRITE_FUNCTION_ENDPOINT || !process.env.APPWRITE_FUNCTION_API_KEY) {
@@ -36,11 +37,13 @@ export default async ({ req, res, log, error }) => {
     const deviceId = req.body['$id'];
 
     log(typeof req.body);
+    log(typeof req.bodyRaw);
+
     log(req.body);
     log(req.body['name']);
     log(req.body['$id']);
-    log(req.bodyRaw.name);
-    log(event)
+    log(req.bodyRaw);
+
     if (!deviceId) {
       error('no deviceId');
       return res.json({ error: 'no deviceId ' }, 400);
