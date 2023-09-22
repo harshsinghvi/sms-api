@@ -37,7 +37,7 @@ export default async ({ req, res, log, error }) => {
     const body = JSON.parse(typeof req.body === typeof 'string' ? req.body : req.bodyRaw);
 
     const { $id: deviceId } = body || {};
-    log(deviceId);
+    log(req.method, ' ', deviceId);
 
     if (!deviceId) {
       error('no deviceId');
@@ -60,12 +60,12 @@ export default async ({ req, res, log, error }) => {
 
         return res.json({ areDevelopersAwesome: true }, 200);
 
-      // INFO: already deleted in manual clean up funciton saved for future reference
-      // case 'delete':
-      //   await databases.deleteCollection(BASE_DATABASE_ID, deviceId);
-      //   return res.json({
-      //     areDevelopersAwesome: true,
-      //   });
+      case 'delete':
+        // INFO: already deleted in manual clean up funciton saved for future reference
+        // await databases.deleteCollection(BASE_DATABASE_ID, deviceId);
+        return res.json({
+          areDevelopersAwesome: true,
+        });
     }
     return res.json({ error: 'Something went Wrong !!' }, 500);
   } catch (err) {
