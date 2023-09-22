@@ -6,18 +6,23 @@
 
 TODOs
 
-- loader
-- modals
-- pagination in db querries
-- send sms ui
-- sort device list on bases of dates
-- landing page + documentation
-- new device forms
-- express api server
-- vercel deployment
-- remove material kit branding
-- logo
-- dashboard stats
+- [ ] upgrade functions [https://appwrite.io/docs/functions-develop#upgrade](https://appwrite.io/docs/functions-develop#upgrade)
+- [ ] update local-server.js
+- [ ] add cicd to appwrite functions
+- [x] remove hardcoded ids form code
+- [ ] change deployment branches
+- [ ] pagination in db querries
+- [ ] dashboard stats
+- [x] sort device list on bases of dates
+- [x] express api server
+- [x] vercel deployment
+- [ ] send sms ui
+- [ ] landing page + documentation
+- [ ] remove material kit branding
+- [ ] new device forms
+- [ ] logo
+- [ ] loader
+- [ ] modals
 
 ## ENV Vars
 

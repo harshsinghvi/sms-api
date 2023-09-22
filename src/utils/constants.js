@@ -6,3 +6,7 @@ export const URL = window.location.hostname === 'localhost' ? 'http://localhost:
 export const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : `${window.location.origin}/api`;
 
 export const DEFAULT_UPDATE_INTERVAL = process.env.NODE_ENV === 'production : ' ? 5 * 1000 : 10 * 1000; // in MS
+
+// INFO: Change ID
+export const SMS_DATABSE_ID = 'sms-api';
+export const DEVICES_COLLECTION_ID = 'devices';
