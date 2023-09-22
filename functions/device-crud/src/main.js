@@ -35,7 +35,10 @@ export default async ({ req, res, log, error }) => {
 
     const { $id: deviceId } = req.body;
 
-    if (!deviceId) return res.json('no deviceId or userId', 400);
+    if (!deviceId) {
+      error('no deviceId');
+      return res.json({ error: 'no deviceId ' }, 400);
+    }
 
     switch (event) {
       case 'create':
