@@ -1,4 +1,4 @@
-import { Client } from 'node-appwrite';
+import { Client, Databases, Permission, Role } from 'node-appwrite';
 
 // This is your Appwrite function
 // It's executed each time we get a request
@@ -26,10 +26,14 @@ export default async ({ req, res, log, error }) => {
   log(req.queryString); // Raw query params string. For example "limit=12&offset=50"
   log(JSON.stringify(req.query));
 
+  log('----------------------------------------------------------------------');
+
   if (req.method !== 'POST') return res.json({ error: 'Something went Wrong !!' }, 500);
   const event = req.headers['x-appwrite-event'].split('.').pop();
 
   const { $id: deviceId, owner } = req.body;
+  log(owner, owner, event);
+
   if (!deviceId || !owner) return res.json('no deviceId or userId', 400);
 
   switch (event) {
@@ -47,9 +51,7 @@ export default async ({ req, res, log, error }) => {
         databases.createEnumAttribute(BASE_DATABASE_ID, deviceId, 'status', ['pending', 'success', 'failed'], false, 'pending'),
       ]);
 
-      return res.json({
-        areDevelopersAwesome: true,
-      });
+      return res.json({ areDevelopersAwesome: true }, 200);
 
     // INFO: already deleted in manual clean up funciton saved for future reference
     // case 'delete':
