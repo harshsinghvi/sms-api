@@ -34,15 +34,12 @@ export default async ({ req, res, log, error }) => {
     if (req.method !== 'POST') return res.json({ error: "Something went Wrong !! Can't use POST" }, 500);
     const event = req.headers['x-appwrite-event'].split('.').pop();
 
-    const deviceId = req.body['$id'];
+    const body = JSON.parse(typeof req.body === typeof 'string' ? req.body : req.bodyRaw);
 
-    log(typeof req.body);
-    log(typeof req.bodyRaw);
+    const { $id: deviceId } = body || {};
 
-    log(req.body);
-    log(req.body['name']);
-    log(req.body['$id']);
-    log(req.bodyRaw);
+    log(body['name']);
+    log(body['$id']);
 
     if (!deviceId) {
       error('no deviceId');
