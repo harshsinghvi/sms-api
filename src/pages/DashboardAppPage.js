@@ -26,7 +26,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard | SMS API </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -100,12 +100,7 @@ export default function DashboardAppPage() {
                 { label: 'Europe', value: 1443 },
                 { label: 'Africa', value: 4443 },
               ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
-              ]}
+              chartColors={[theme.palette.primary.main, theme.palette.info.main, theme.palette.warning.main, theme.palette.error.main]}
             />
           </Grid>
 

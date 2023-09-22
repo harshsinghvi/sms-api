@@ -1,10 +1,13 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { AppwriteException } from 'appwrite';
 // @mui
 import { styled } from '@mui/material/styles';
 //
 import Header from './header';
 import Nav from './nav';
+import { AuthContext } from '../../utils/auth';
+import { account, avatars } from '../../utils/appwrite';
 
 // ----------------------------------------------------------------------
 
@@ -34,16 +37,34 @@ const Main = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await account.get();
+        const photoURL = avatars.getInitials();
+        setUser({ ...response, photoURL });
+      } catch (e) {
+        if (e instanceof AppwriteException && e.code === 401) {
+          return navigate('/login', { replace: true });
+        }
+        throw e;
+      }
+      return false;
+    })();
+  }, [navigate]);
+  if (!user) return <h1>Loading...</h1>;
   return (
-    <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
-
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-
-      <Main>
-        <Outlet />
-      </Main>
-    </StyledRoot>
+    <AuthContext.Provider value={{ user }}>
+      <StyledRoot>
+        <Header onOpenNav={() => setOpen(true)} />
+        <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+        <Main>
+          <Outlet />
+        </Main>
+      </StyledRoot>
+    </AuthContext.Provider>
   );
 }
