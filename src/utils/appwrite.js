@@ -26,7 +26,7 @@ export const logOut = async (callback) => {
 };
 
 export const getDevices = async () => {
-  const { total, documents: devices } = await databases.listDocuments('64eb86e3be39b1fca82c', '64eb87b42cf58f11232c', [
+  const { documents: devices } = await databases.listDocuments('64eb86e3be39b1fca82c', '64eb87b42cf58f11232c', [
     Query.equal('delete', false),
     // Query.equal('delete', null),
   ]);
@@ -44,10 +44,16 @@ export const addDevice = async (userId) => {
     ID.unique(),
     {
       name: prompt('Device Name'),
-      model: "Android", // prompt('model'),
-      battery: 100, // prompt('Battery'),
-      carrierName: "JIO", // prompt('carrierName'),
-      signalStrength: 50, // prompt('signalStrength'),
+      model: prompt('model'),
+      battery: prompt('Battery'),
+      carrierName: prompt('carrierName'),
+      signalStrength: prompt('signalStrength'),
+
+      // model: 'Android',
+      // battery: 100,
+      // carrierName: 'JIO',
+      // signalStrength: 50,
+
       owner: userId,
       delete: false,
     },

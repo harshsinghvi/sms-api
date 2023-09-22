@@ -31,9 +31,15 @@ REACT_APP_APPWRITE_URL=
 REACT_APP_APPWRITE_PROJECT_ID=
 ```
 
+## Execute functions on Appwrite or locally
+
+- `node local-server.js <function-name>`
+- or `yarn run aw-function ./function/<function-name>`
+- or `yarn run aw-function <function-name>`
+
 ## Future Features
 
-- Load balancing, 
+- Load balancing,
 - device group/pool and sharing,
 - access sharing,
 - per device limits

@@ -19,6 +19,21 @@
             ],
             "schedule": "",
             "timeout": 15
+        },
+        {
+            "$id": "650da48d3f8ea9cb7a91",
+            "name": "clean-up",
+            "runtime": "node-18.0",
+            "path": "functions/clean-up",
+            "entrypoint": "src/index.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 15
         }
     ]
 }
