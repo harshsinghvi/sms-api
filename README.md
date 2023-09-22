@@ -11,7 +11,7 @@ TODOs
 - [ ] add cicd to appwrite functions
 
 - [x] remove hardcoded ids form code
-- [x] sort device list on bases of dates
+- [ ] sort device list on bases of dates
 - [x] express api server
 - [x] vercel deployment
 - [x] change deployment branches (vercel)
