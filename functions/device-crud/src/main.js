@@ -48,7 +48,7 @@ export default async ({ req, res, log, error }) => {
       case 'create':
         await databases.createCollection(BASE_DATABASE_ID, deviceId, `device_${deviceId}`, [Permission.read(Role.any())]);
 
-        // TODO: Check if needed
+        // INFO: UNcomment if collections are disabled by default
         // const { enabled } = await databases.updateCollection(BASE_DATABASE_ID, deviceId, `device_${deviceId}`, [], false, true);
         // if (!enabled) res.send('Something went Wrong', 500);
 
