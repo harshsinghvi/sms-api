@@ -11,15 +11,16 @@ TODOs
 - [ ] add cicd to appwrite functions
 
 - [x] remove hardcoded ids form code
-- [x] sort device list on bases of dates
+- [ ] sort device list on bases of dates
 - [x] express api server
 - [x] vercel deployment
 - [x] change deployment branches (vercel)
 
+- [ ] update react
 - [ ] pagination in db querries
 - [ ] dashboard stats
-- [ ] send sms ui
 
+- [ ] send sms ui
 - [ ] landing page + documentation
 - [ ] remove material kit branding
 - [ ] new device forms

@@ -1,60 +1,66 @@
-if (process.argv.length < 3) {
-  console.log('Invalid Usage');
-  process.exit();
-}
+const main = async () => {
+  if (process.argv.length < 3) {
+    console.log('Invalid Usage');
+    return;
+  }
 
-const fs = require('fs');
-const dotenv = require('dotenv');
+  let path = process.argv[2].split('/');
 
-let path = process.argv[2].split('/');
+  if (path[path.length - 1] === 'index.js') path = path.join('/');
+  if (path[path.length - 1] === 'src') path = path.join('/');
+  if (path.length > 1) path = `${path.join('/')}`;
+  if (path.length === 1) path = `./functions/${path}/src`;
 
-if (path[path.length - 1] === 'index.js') path = path.join('/');
-if (path[path.length - 1] === 'src') path = path.join('/');
-if (path.length > 1) path = `${path.join('/')}`;
-if (path.length === 1) path = `./functions/${path}/src`;
+  // eslint-disable-next-line global-require
+  require('dotenv').config({ path: `${path}/../.env` });
 
-// eslint-disable-next-line import/no-dynamic-require
-const func = require(path);
+  // eslint-disable-next-line import/no-dynamic-require
+  const func = await import(`${path}/main.js`);
 
-// eslint-disable-next-line import/no-dynamic-require
-const customReq = fs.existsSync(`${path}/../req.js`) ? require(`${path}/../req.js`) : {};
+  const req = {
+    method: 'POST',
+    body: {
+      name: 'test',
+      status: 'unregistered',
+      owner: null,
+      model: null,
+      delete: false,
+      battery: null,
+      carrierName: null,
+      signalStrength: null,
+      lastSeen: null,
+      $id: '650dfa58477e756df9a7',
+      $permissions: [],
+      $createdAt: '2023-09-22T20:34:32.293+00:00',
+      $updatedAt: '2023-09-22T20:34:32.293+00:00',
+      $databaseId: 'sms-api',
+      $collectionId: 'devices',
+    },
+    headers: {
+      host: '650df9fc0831d:3000',
+      'user-agent': 'Appwrite/1.4.3',
+      'x-appwrite-trigger': 'event',
+      'x-appwrite-event': 'databases.sms-api.collections.devices.documents.650dfa58477e756df9a7.create',
+      'x-appwrite-user-id': '64ea7c90df02919e23f1',
+      'content-type': 'application/x-www-form-urlencoded',
+      connection: 'keep-alive',
+      'content-length': '339',
+    },
+  };
 
-const req = {
-  headers: {},
-  payload: {},
-  variables: {
-    ...process.env, // add env vars
-    // custom
-    SMS_DATABSE_ID: 'asdasd',
-    DEVICES_COLLECTION_ID: 'asd',
-    // // Creds
-    // APPWRITE_FUNCTION_ENDPOINT: 'https://cloud.appwrite.io/v1',
-    // APPWRITE_FUNCTION_API_KEY:
-    //   '3e26e32b03a54ea17d0a1a196eab4cf572c7c35a953b07b5de6c9f46962f408da9d8dd108f6d40aafaf42f441a79772e75d619782aea4cda95aac62e017b661283d082a49f36496ad3ba79930727f674fece61ef76dffcf8258ea13b942679987a407c0f84095bde6baa76a0bd0f46d25a37913c6ee613cb7660f0c614814ae9',
+  const res = {
+    send(text, status) {
+      console.log('[SEND] ', text, status);
+    },
+    json(obj, status) {
+      console.log('[JSON] ', obj, status);
+    },
+  };
 
-    // default
-    APPWRITE_FUNCTION_ID: '',
-    APPWRITE_FUNCTION_NAME: '',
-    APPWRITE_FUNCTION_DEPLOYMENT: '',
-    APPWRITE_FUNCTION_TRIGGER: '',
-    APPWRITE_FUNCTION_RUNTIME_NAME: '',
-    APPWRITE_FUNCTION_RUNTIME_VERSION: '',
-    APPWRITE_FUNCTION_EVENT: '',
-    APPWRITE_FUNCTION_EVENT_DATA: '',
-    APPWRITE_FUNCTION_DATA: '',
-    APPWRITE_FUNCTION_USER_ID: '',
-    APPWRITE_FUNCTION_JWT: '',
-  },
-  ...customReq,
+  const log = (...args) => console.log('[LOG] ', ...args);
+  const error = (...args) => console.error('[ERR] ', ...args);
+
+  func.default({ req, res, log, error }).then();
 };
 
-const res = {
-  send(text, status) {
-    console.log(text, status);
-  },
-  json(obj, status) {
-    console.log(obj, status);
-  },
-};
-
-func(req, res).then();
+main();
