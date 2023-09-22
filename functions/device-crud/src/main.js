@@ -33,7 +33,7 @@ export default async ({ req, res, log, error }) => {
     if (req.method !== 'POST') return res.json({ error: "Something went Wrong !! Can't use POST" }, 500);
     const event = req.headers['x-appwrite-event'].split('.').pop();
 
-    const { $id: deviceId } = req.body;
+    const deviceId = req.body['$id'];
 
     if (!deviceId) {
       error('no deviceId');
