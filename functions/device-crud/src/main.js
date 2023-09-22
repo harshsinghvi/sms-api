@@ -50,8 +50,7 @@ export default async ({ req, res, log, error }) => {
 
         // TODO: Check if needed
         // const { enabled } = await databases.updateCollection(BASE_DATABASE_ID, deviceId, `device_${deviceId}`, [], false, true);
-
-        if (!enabled) res.send('Something went Wrong', 500);
+        // if (!enabled) res.send('Something went Wrong', 500);
 
         await Promise.all([
           databases.createStringAttribute(BASE_DATABASE_ID, deviceId, 'text', 160, true),
