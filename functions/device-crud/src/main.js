@@ -16,8 +16,8 @@ export default async ({ req, res, log, error }) => {
 
     const databases = new Databases(client);
 
-    log(req.bodyRaw); // Raw request body, contains request data
-    log(JSON.stringify(req.body)); // Object from parsed JSON request body, otherwise string
+    // log(req.bodyRaw); // Raw request body, contains request data
+    // log(JSON.stringify(req.body)); // Object from parsed JSON request body, otherwise string
     log(JSON.stringify(req.headers)); // String key-value pairs of all request headers, keys are lowercase
     // log(req.scheme); // Value of the x-forwarded-proto header, usually http or https
     log(req.method); // Request method, such as GET, POST, PUT, DELETE, PATCH, etc.
@@ -35,7 +35,7 @@ export default async ({ req, res, log, error }) => {
 
     const deviceId = req.body['$id'];
 
-    log(req.body.name);
+    log(req.body);
 
     if (!deviceId) {
       error('no deviceId');
