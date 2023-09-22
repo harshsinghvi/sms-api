@@ -29,14 +29,13 @@ export default async ({ req, res, log, error }) => {
     // log(JSON.stringify(req.query));
 
     // log('----------------------------------------------------------------------');
-    
-    if (req.method !== 'POST') return res.json({ error: 'Something went Wrong !!' }, 500);
+
+    if (req.method !== 'POST') return res.json({ error: "Something went Wrong !! Can't use POST" }, 500);
     const event = req.headers['x-appwrite-event'].split('.').pop();
 
-    const { $id: deviceId, owner } = req.body;
-    log(owner, owner, event);
+    const { $id: deviceId } = req.body;
 
-    if (!deviceId || !owner) return res.json('no deviceId or userId', 400);
+    if (!deviceId) return res.json('no deviceId or userId', 400);
 
     switch (event) {
       case 'create':
