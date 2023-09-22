@@ -36,7 +36,10 @@ export default async ({ req, res, log, error }) => {
     const deviceId = req.body['$id'];
 
     log(req.body);
-
+    log(req.body['name']);
+    log(req.body['$id']);
+    log(req.bodyRaw.name);
+    
     if (!deviceId) {
       error('no deviceId');
       return res.json({ error: 'no deviceId ' }, 400);
