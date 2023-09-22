@@ -4,6 +4,7 @@ const SMS_DATABSE_ID = 'sms-api';
 const DEVICES_COLLECTION_ID = 'devices';
 
 export default async ({ req, res, log, error }) => {
+  console.log(process.env)
   try {
     if (!process.env.APPWRITE_FUNCTION_ENDPOINT || !process.env.APPWRITE_FUNCTION_API_KEY) {
       error('Environment variables are not set. Function cannot use Appwrite SDK.');
@@ -41,7 +42,7 @@ export default async ({ req, res, log, error }) => {
 
     let promises = [];
 
-    for (id of deleteKeys) {
+    for (let id of deleteKeys) {
       promises.push(database.deleteCollection(SMS_DATABSE_ID, id).then(() => log(id, '=>', 'Collection deleted')));
       promises.push(database.deleteDocument(SMS_DATABSE_ID, DEVICES_COLLECTION_ID, id).then(() => log(id, '=>', 'Document deleted')));
     }
