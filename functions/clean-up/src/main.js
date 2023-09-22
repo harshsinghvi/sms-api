@@ -58,7 +58,7 @@ export default async ({ req, res, log, error }) => {
 
     await Promise.all(promises);
 
-    res.json({
+    return res.json({
       areDevelopersAwesome: true,
       promises: promises.length,
       deleteKeys,
